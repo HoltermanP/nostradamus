@@ -1,0 +1,61 @@
+{
+  "_comment": "Geverifieerde spelers/feiten per land (stand juni 2026). Het model mag ALLEEN namen uit deze lijst gebruiken en niets verzinnen. 'verified:false' = nog niet gecheckt, gebruik dan geen namen.",
+  "Brazilië": {
+    "verified": true,
+    "coach": "Carlo Ancelotti",
+    "players": ["Raphinha", "Vinícius Júnior", "Endrick", "Matheus Cunha", "Neymar"],
+    "facts": ["Raphinha was topscorer in de kwalificatie (5 goals)"]
+  },
+  "Marokko": {
+    "verified": true,
+    "coach": "Mohamed Ouahbi",
+    "players": ["Achraf Hakimi", "Brahim Díaz", "Ayoub El Kaabi"],
+    "facts": ["Hakimi is aanvoerder", "Brahim Díaz was topscorer op de AFCON", "Youssef En-Nesyri is NIET geselecteerd"]
+  },
+  "Schotland": {
+    "verified": true,
+    "coach": "Steve Clarke",
+    "players": ["Scott McTominay", "John McGinn", "Andrew Robertson", "Ché Adams"],
+    "facts": ["McTominay maakte een omhaal in de beslissende kwalificatiezege op Denemarken", "Robertson is aanvoerder"]
+  },
+  "Haïti": {
+    "verified": true,
+    "coach": "Sébastien Migné",
+    "players": ["Duckens Nazon", "Frantzdy Pierrot", "Wilson Isidor"],
+    "facts": ["Grotendeels een diaspora-selectie"]
+  },
+  "Nederland": {
+    "verified": true,
+    "coach": "Ronald Koeman",
+    "players": ["Memphis Depay", "Cody Gakpo", "Frenkie de Jong", "Tijjani Reijnders"],
+    "facts": ["Depay is recordinternational met 55 goals", "Xavi Simons mist het WK door een kruisbandblessure"]
+  },
+  "Japan": {
+    "verified": true,
+    "coach": "Hajime Moriyasu",
+    "players": ["Takefusa Kubo", "Wataru Endo"],
+    "facts": ["Endo is aanvoerder", "Kaoru Mitoma en Takumi Minamino missen het WK door blessures"]
+  },
+  "Spanje": {
+    "verified": true,
+    "coach": "Luis de la Fuente",
+    "players": ["Lamine Yamal", "Pedri", "Nico Williams"],
+    "facts": []
+  },
+  "Uruguay": {
+    "verified": true,
+    "coach": "",
+    "players": ["Federico Valverde", "Darwin Núñez"],
+    "facts": ["Valverde is aanvoerder"]
+  },
+  "Kaapverdië": {
+    "verified": true,
+    "players": [],
+    "facts": ["Speelt zijn allereerste WK ooit (debutant)"]
+  },
+  "Curaçao": {
+    "verified": true,
+    "players": [],
+    "facts": ["WK-debutant"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "_comment": "WK 2026 speelschema. Datums in NL-tijd (YYYY-MM-DD). Geverifieerd t/m 15 juni; vul de rest van de groepsfase + knockout aan. Laat 'group' weg als je die niet zeker weet.",
+  "2026-06-12": [
+    { "group": "B", "home": "Canada", "away": "Bosnië-Herzegovina" },
+    { "group": "D", "home": "Verenigde Staten", "away": "Paraguay" }
+  ],
+  "2026-06-13": [
+    { "group": "B", "home": "Qatar", "away": "Zwitserland" },
+    { "group": "C", "home": "Brazilië", "away": "Marokko" },
+    { "group": "C", "home": "Haïti", "away": "Schotland" }
+  ],
+  "2026-06-14": [
+    { "group": "D", "home": "Australië", "away": "Turkije" },
+    { "group": "E", "home": "Duitsland", "away": "Curaçao" },
+    { "group": "E", "home": "Nederland", "away": "Japan" },
+    { "home": "Ivoorkust", "away": "Ecuador" },
+    { "home": "Zweden", "away": "Tunesië" }
+  ],
+  "2026-06-15": [
+    { "group": "H", "home": "Spanje", "away": "Kaapverdië" },
+    { "group": "F", "home": "België", "away": "Egypte" },
+    { "group": "H", "home": "Saoedi-Arabië", "away": "Uruguay" },
+    { "group": "F", "home": "Iran", "away": "Nieuw-Zeeland" }
+  ]
+}

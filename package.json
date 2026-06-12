@@ -1,0 +1,14 @@
+{
+  "name": "nostradamus-wk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dagelijkse WK-2026 voorspelling in Nostradamus-stijl, verstuurd via Vercel Cron + SMTP.",
+  "scripts": {
+    "test:local": "node scripts/test-local.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.14",
+    "openai": "^4.56.0"
+  }
+}
