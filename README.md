@@ -51,7 +51,18 @@ Zet daarna alle env-vars uit `.env.example` in **Vercel → Project → Settings
 
 > **Tijdzone:** Vercel Cron draait in **UTC**. `0 5 * * *` = 07:00 NL zomertijd (CEST, UTC+2). In de wintertijd (CET, UTC+1) wordt dat 06:00 NL — pas dan aan naar `0 6 * * *` als je per se 07:00 wilt. Voor het WK (juni/juli) klopt `0 5 * * *`.
 
-### Endpoint los testen (preview, verstuurt niets)
+### Endpoint los testen
+
+Open de homepage (`/`) voor een test-UI: preview genereren, mail versturen, ontvangers instellen.
+
+API (met `Authorization: Bearer <CRON_SECRET>`):
+
+```
+GET  /api/test/nostradamus          → standaard mailTo + vandaag
+POST /api/test/nostradamus          → { "action": "preview" | "send", "date": "2026-06-13", "mailTo": "a@..., b@..." }
+```
+
+Preview zonder UI:
 
 ```
 https://<jouw-project>.vercel.app/api/cron/nostradamus?preview=1

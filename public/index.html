@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nostradamus WK 2026</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 40rem;
+      margin: 2.5rem auto;
+      padding: 0 1.25rem 3rem;
+      line-height: 1.5;
+      color: #111;
+      background: #fafafa;
+    }
+    h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+    .subtitle { color: #666; margin: 0 0 1.5rem; font-size: 0.95rem; }
+    section {
+      background: #fff;
+      border: 1px solid #e4e4e7;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    h2 { font-size: 1rem; margin: 0 0 1rem; }
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+    }
+    .hint {
+      font-size: 0.8rem;
+      color: #71717a;
+      margin: 0.25rem 0 0.75rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid #d4d4d8;
+      border-radius: 6px;
+      font: inherit;
+      background: #fff;
+    }
+    input:focus, textarea:focus {
+      outline: 2px solid #93c5fd;
+      border-color: #3b82f6;
+    }
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    button {
+      font: inherit;
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary {
+      background: #18181b;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #fff;
+      border-color: #d4d4d8;
+      color: #18181b;
+    }
+    .btn-send {
+      background: #2563eb;
+      color: #fff;
+    }
+    #result {
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 4rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: #71717a;
+      margin-top: 0.75rem;
+    }
+    .status-ok { color: #15803d; }
+    .status-err { color: #b91c1c; }
+    .status-warn { color: #a16207; }
+  </style>
+</head>
+<body>
+  <h1>🔮 Nostradamus WK 2026</h1>
+  <p class="subtitle">Genereer en test voorspellingen. De cron mailt elke ochtend om 07:00 NL-tijd.</p>
+
+  <section>
+    <h2>Instellingen</h2>
+    <div class="field">
+      <label for="secret">CRON_SECRET</label>
+      <input id="secret" type="password" autocomplete="off" placeholder="Bearer-token voor API" />
+      <p class="hint">Zelfde waarde als in Vercel. Wordt lokaal in je browser opgeslagen.</p>
+    </div>
+    <div class="field">
+      <label for="mailTo">Ontvangers (mailTo)</label>
+      <input id="mailTo" type="text" placeholder="adres1@..., adres2@..." />
+      <p class="hint">Komma-gescheiden. Leeg = standaard uit MAIL_TO op de server.</p>
+    </div>
+    <div class="field">
+      <label for="date">Speeldag (optioneel)</label>
+      <input id="date" type="date" />
+      <p class="hint">Leeg = vandaag (NL-tijd). Handig om een andere dag te testen.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Test</h2>
+    <div class="actions">
+      <button id="btnPreview" class="btn-secondary" type="button">Preview genereren</button>
+      <button id="btnSend" class="btn-send" type="button">Genereren &amp; versturen</button>
+    </div>
+    <p id="status" class="meta" aria-live="polite"></p>
+  </section>
+
+  <section>
+    <h2>Resultaat</h2>
+    <div id="result">Nog geen voorspelling gegenereerd.</div>
+    <p id="meta" class="meta"></p>
+  </section>
+
+  <script>
+    const LS_SECRET = "nostradamus_cron_secret";
+    const LS_MAIL_TO = "nostradamus_mail_to";
+
+    const secretEl = document.getElementById("secret");
+    const mailToEl = document.getElementById("mailTo");
+    const dateEl = document.getElementById("date");
+    const resultEl = document.getElementById("result");
+    const statusEl = document.getElementById("status");
+    const metaEl = document.getElementById("meta");
+    const btnPreview = document.getElementById("btnPreview");
+    const btnSend = document.getElementById("btnSend");
+
+    secretEl.value = localStorage.getItem(LS_SECRET) || "";
+    mailToEl.value = localStorage.getItem(LS_MAIL_TO) || "";
+
+    secretEl.addEventListener("change", () => {
+      localStorage.setItem(LS_SECRET, secretEl.value.trim());
+      loadDefaults();
+    });
+    mailToEl.addEventListener("change", () => {
+      localStorage.setItem(LS_MAIL_TO, mailToEl.value.trim());
+    });
+
+    function authHeaders() {
+      const secret = secretEl.value.trim();
+      const headers = { "Content-Type": "application/json" };
+      if (secret) headers.Authorization = `Bearer ${secret}`;
+      return headers;
+    }
+
+    function payload(action) {
+      const body = { action };
+      const date = dateEl.value.trim();
+      const mailTo = mailToEl.value.trim();
+      if (date) body.date = date;
+      if (mailTo) body.mailTo = mailTo;
+      return body;
+    }
+
+    function setBusy(busy) {
+      btnPreview.disabled = busy;
+      btnSend.disabled = busy;
+    }
+
+    function showStatus(text, kind) {
+      statusEl.textContent = text;
+      statusEl.className = `meta status-${kind || ""}`;
+    }
+
+    async function loadDefaults() {
+      try {
+        const res = await fetch("/api/test/nostradamus", { headers: authHeaders() });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.today && !dateEl.value) dateEl.value = data.today;
+        if (!mailToEl.value && data.defaultMailTo) {
+          mailToEl.value = data.defaultMailTo;
+          localStorage.setItem(LS_MAIL_TO, data.defaultMailTo);
+        }
+      } catch {
+        /* offline of geen secret */
+      }
+    }
+
+    async function run(action) {
+      setBusy(true);
+      showStatus(action === "send" ? "Bezig met genereren en versturen…" : "Bezig met genereren…", "");
+
+      try {
+        const res = await fetch("/api/test/nostradamus", {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify(payload(action)),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          resultEl.textContent = data.error || "Onbekende fout";
+          showStatus(`Fout (${res.status})`, "err");
+          metaEl.textContent = "";
+          return;
+        }
+
+        if (data.skipped) {
+          resultEl.textContent = data.reason || "Geen wedstrijden voor deze datum.";
+          showStatus("Overgeslagen", "warn");
+          metaEl.textContent = data.date ? `Datum: ${data.date}` : "";
+          return;
+        }
+
+        resultEl.textContent = data.text || "(geen tekst)";
+        if (data.sent) {
+          showStatus(`Verzonden naar ${data.mailTo}`, "ok");
+        } else {
+          showStatus("Preview klaar (niet verstuurd)", "ok");
+        }
+        metaEl.textContent = [
+          data.date ? `Speeldag: ${data.date}` : "",
+          data.length != null ? `${data.length} tekens` : "",
+        ].filter(Boolean).join(" · ");
+      } catch (err) {
+        resultEl.textContent = String(err.message || err);
+        showStatus("Netwerkfout", "err");
+        metaEl.textContent = "";
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    btnPreview.addEventListener("click", () => run("preview"));
+    btnSend.addEventListener("click", () => {
+      const mailTo = mailToEl.value.trim();
+      if (!mailTo && !confirm("Geen ontvangers ingevuld — server gebruikt MAIL_TO uit env. Doorgaan?")) {
+        return;
+      }
+      run("send");
+    });
+
+    loadDefaults();
+  </script>
+</body>
+</html>

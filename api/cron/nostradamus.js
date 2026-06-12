@@ -1,4 +1,5 @@
-import { generateMessage, todayNL } from "../../lib/generate.js";
+import { checkCronAuth } from "../../lib/auth.js";
+import { generateMessage } from "../../lib/generate.js";
 import { sendMail } from "../../lib/mailer.js";
 
 /**
@@ -6,12 +7,8 @@ import { sendMail } from "../../lib/mailer.js";
  * Genereert de Nostradamus-voorspelling en mailt die via eigen SMTP.
  */
 export default async function handler(req, res) {
-  // Beveiliging: Vercel Cron stuurt 'Authorization: Bearer <CRON_SECRET>' mee als die env-var is gezet.
-  if (process.env.CRON_SECRET) {
-    const auth = req.headers["authorization"];
-    if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  if (!checkCronAuth(req)) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   try {
